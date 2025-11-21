@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #f5f5f7;
+            color: #000000;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        /* 主容器白色卡片 */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        /* 卡片头部 */
+        .container-header {
+            padding: 40px 60px 30px 60px;
+            border-bottom: 1px solid #e8e9ed;
+            position: relative;
+        }
+
+        .report-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+        }
+
+        .report-date {
+            font-size: 16px;
+            color: #86868b;
+            font-weight: 400;
+        }
+
+        /* 卡片主体内容区域 */
+        .container-body {
+            padding: 40px 60px 60px 60px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 24px;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin: 32px 0 16px 0;
+        }
+
+        /* 卡片网格 */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 0;
+        }
+
+        .metric-card {
+            background: #f5f5f7;
+            padding: 28px 24px;
+            border-radius: 12px;
+            border: none;
+        }
+
+        .card-label {
+            font-size: 14px;
+            color: #86868b;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .card-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        /* 新增用户 - 蓝色 */
+        .card-value.value-increase {
+            color: #007aff;
+        }
+
+        /* 退出用户 - 红色 */
+        .card-value.value-decrease {
+            color: #ff3b30;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: #86868b;
+        }
+
+        /* 双栏卡片布局 */
+        .dual-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .chart-card {
+            background: #ffffff;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .chart-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 28px;
+        }
+
+        /* 条形图样式 */
+        .bar-chart-item {
+            margin-bottom: 24px;
+        }
+
+        .bar-chart-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .bar-label-text {
+            font-size: 15px;
+            font-weight: 500;
+            color: #1d1d1f;
+        }
+
+        .bar-label-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+
+        .bar-container {
+            width: 100%;
+            height: 8px;
+            background: #f5f5f7;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: #1d1d1f;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        /* 条形图颜色 */
+        .bar-fill.bar-color-1 {
+            background: #007aff;
+        }
+
+        .bar-fill.bar-color-2 {
+            background: #34c759;
+        }
+
+        .bar-fill.bar-color-3 {
+            background: #ff9500;
+        }
+
+        .bar-fill.bar-color-4 {
+            background: #ff3b30;
+        }
+
+        .bar-fill.bar-color-5 {
+            background: #af52de;
+        }
+
+        /* 饼图样式 */
+        .pie-chart-container {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .pie-chart {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #007aff 0% 21.1%,
+                #34c759 21.1% 52.7%,
+                #ff9500 52.7% 100%
+            );
+        }
+
+        .pie-legend {
+            flex: 1;
+        }
+
+        .pie-legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .pie-legend-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .pie-legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .pie-legend-color.color-1 {
+            background: #007aff;
+        }
+
+        .pie-legend-color.color-2 {
+            background: #34c759;
+        }
+
+        .pie-legend-color.color-3 {
+            background: #ff9500;
+        }
+
+        .pie-legend-label {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pie-legend-name {
+            font-size: 14px;
+            color: #1d1d1f;
+            font-weight: 500;
+        }
+
+        .pie-legend-value {
+            font-size: 14px;
+            color: #1d1d1f;
+            font-weight: 600;
+        }
+
+        /* 表格样式 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0 0 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .data-table th {
+            background: #5B7FE8;
+            color: #ffffff;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 1px solid #e8e9ed;
+        }
+
+        .data-table td {
+            padding: 14px 16px;
+            font-size: 13px;
+            color: #1d1d1f;
+            border-bottom: 1px solid #e8e9ed;
+            background: #ffffff;
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tbody tr:hover {
+            background: #fafafa;
+        }
+
+        /* 导出按钮 */
+        .export-btn {
+            position: absolute;
+            top: 40px;
+            right: 60px;
+            padding: 10px 20px;
+            background: #1d1d1f;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .export-btn:hover {
+            background: #000000;
+            transform: translateY(-1px);
+        }
+
+        .export-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 封面页 - 网页预览时隐藏 */
+        .cover-page {
+            display: none;
+            background: linear-gradient(135deg, #4169E1 0%, #5B7FE8 50%, #7B9AFF 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cover-page::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 150%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="800" height="800" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+            transform: rotate(-15deg);
+        }
+
+        .cover-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover-logo {
+            width: 180px;
+            height: auto;
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            display: block;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
+        }
+
+        /* 移动端响应式适配 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px 0;
+            }
+
+            .main-container {
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .container-header {
+                padding: 20px 16px;
+            }
+
+            .report-title {
+                font-size: 24px;
+            }
+
+            .report-date {
+                font-size: 14px;
+            }
+
+            .export-btn {
+                top: 20px;
+                right: 16px;
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+
+            .container-body {
+                padding: 20px 16px;
+            }
+
+            .section {
+                margin-bottom: 30px;
+            }
+
+            .section-title {
+                font-size: 18px;
+                margin-bottom: 16px;
+            }
+
+            .section-subtitle {
+                font-size: 15px;
+                margin: 20px 0 12px 0;
+            }
+
+            /* 卡片改为单列布局 */
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .metric-card {
+                padding: 20px 16px;
+            }
+
+            .card-label {
+                font-size: 13px;
+                margin-bottom: 10px;
+            }
+
+            .card-value {
+                font-size: 28px;
+                margin-bottom: 6px;
+            }
+
+            .card-subtitle {
+                font-size: 13px;
+            }
+
+            /* 双栏改为单列 */
+            .dual-cards {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                margin: 16px 0;
+            }
+
+            .chart-card {
+                padding: 20px 16px;
+            }
+
+            .chart-card-title {
+                font-size: 15px;
+                margin-bottom: 20px;
+            }
+
+            /* 饼图容器改为竖向布局 */
+            .pie-chart-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .pie-chart {
+                width: 160px;
+                height: 160px;
+                margin: 0 auto;
+            }
+
+            .pie-legend {
+                width: 100%;
+            }
+
+            .pie-legend-item {
+                margin-bottom: 12px;
+            }
+
+            .pie-legend-name,
+            .pie-legend-value {
+                font-size: 13px;
+            }
+
+            /* 条形图优化 */
+            .bar-chart-item {
+                margin-bottom: 16px;
+            }
+
+            .bar-label-text,
+            .bar-label-value {
+                font-size: 14px;
+            }
+
+            /* 移动端表格滚动优化 */
+            .data-table {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 8px;
+                font-size: 10px;
+            }
+
+            .data-table thead,
+            .data-table tbody {
+                display: table;
+                width: max-content;
+                min-width: 100%;
+                table-layout: auto;
+            }
+
+            .data-table tr {
+                display: table-row;
+            }
+
+            .data-table th,
+            .data-table td {
+                display: table-cell;
+                padding: 8px 6px;
+                font-size: 10px;
+                white-space: nowrap;
+                vertical-align: middle;
+            }
+
+            .data-table th {
+                background: #5B7FE8 !important;
+                color: #ffffff !important;
+                font-weight: 600;
+                border-right: 1px solid rgba(255, 255, 255, 0.2);
+                text-align: left;
+            }
+
+            .data-table th:last-child {
+                border-right: none;
+            }
+
+            .data-table td {
+                background: #ffffff !important;
+                color: #1d1d1f !important;
+                border-bottom: 1px solid #e8e9ed;
+                text-align: left;
+            }
+
+            .data-table tbody tr:last-child td {
+                border-bottom: none;
+            }
+        }
+
+        /* 打印样式 - 保持和网页预览相同的样式 */
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            /* 封面页专属页面设置 - 无边距 */
+            @page :first {
+                margin: 0;
+                size: A4 portrait;
+            }
+
+            /* 其他页面保持边距 */
+            @page {
+                margin: 5mm;
+                size: A4 portrait;
+            }
+
+            /* 隐藏导出按钮 */
+            .export-btn {
+                display: none !important;
+            }
+
+            /* 保持主容器样式 */
+            .main-container {
+                max-width: 100% !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                page-break-inside: avoid;
+            }
+
+            /* 隐藏报告表头 */
+            .container-header {
+                display: none !important;
+                visibility: hidden !important;
+                height: 0 !important;
+                overflow: hidden !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .report-title,
+            .report-date,
+            .export-btn {
+                display: none !important;
+                visibility: hidden !important;
+            }
+
+            /* 内容区域 - 表头隐藏后从顶部开始 */
+            .container-body {
+                padding: 10px 25px 25px 25px !important;
+            }
+
+            /* 紧凑化章节间距 */
+            .section {
+                margin-bottom: 20px !important;
+            }
+
+            .section-title {
+                font-size: 17px !important;
+                margin-bottom: 12px !important;
+            }
+
+            .section-subtitle {
+                font-size: 14px !important;
+                margin: 16px 0 10px 0 !important;
+            }
+
+            /* 强制在第二页开始 */
+            .page-break-before {
+                page-break-before: always !important;
+            }
+
+            /* 确保卡片保持3列布局 */
+            .cards-grid {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 12px !important;
+                margin-bottom: 0 !important;
+            }
+
+            /* 确保双栏保持2列布局 */
+            .dual-cards {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 16px !important;
+                margin: 12px 0 !important;
+            }
+
+            .chart-card {
+                padding: 16px !important;
+            }
+
+            .chart-card-title {
+                font-size: 14px !important;
+                margin-bottom: 16px !important;
+            }
+
+            .pie-chart {
+                width: 140px !important;
+                height: 140px !important;
+            }
+
+            .bar-chart-item {
+                margin-bottom: 16px !important;
+            }
+
+            .bar-label-text,
+            .bar-label-value {
+                font-size: 13px !important;
+            }
+
+            .cards-grid,
+            .dual-cards,
+            .data-table {
+                page-break-inside: avoid;
+            }
+
+            /* 重置表格样式确保正常显示 */
+            .data-table {
+                display: table !important;
+                width: 100% !important;
+                overflow: visible !important;
+                font-size: 12px !important;
+            }
+
+            .data-table thead,
+            .data-table tbody {
+                display: table-row-group !important;
+                width: auto !important;
+            }
+
+            .data-table tr {
+                display: table-row !important;
+            }
+
+            .data-table th,
+            .data-table td {
+                display: table-cell !important;
+                padding: 10px 12px !important;
+                font-size: 12px !important;
+                white-space: normal !important;
+                vertical-align: middle !important;
+            }
+
+            .data-table th {
+                background: #5B7FE8 !important;
+                color: #ffffff !important;
+                font-weight: 600 !important;
+                text-align: left !important;
+            }
+
+            .data-table td {
+                background: #ffffff !important;
+                color: #1d1d1f !important;
+                border-bottom: 1px solid #e8e9ed !important;
+                text-align: left !important;
+            }
+
+            /* 保持正常字体大小 */
+            .metric-card {
+                padding: 16px 14px !important;
+            }
+
+            .card-label {
+                font-size: 12px !important;
+                margin-bottom: 8px !important;
+            }
+
+            .card-value {
+                font-size: 26px !important;
+                margin-bottom: 6px !important;
+            }
+
+            .card-subtitle {
+                font-size: 11px !important;
+            }
+
+            /* 封面页打印样式 */
+            .cover-page {
+                display: flex !important;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                width: 100vw;
+                margin: 0 !important;
+                padding: 0 !important;
+                page-break-after: always;
+                background: linear-gradient(135deg, #4169E1 0%, #5B7FE8 50%, #7B9AFF 100%) !important;
+                text-align: center;
+                position: relative !important;
+                overflow: hidden;
+                box-sizing: border-box;
+            }
+
+            .cover-page::before {
+                opacity: 0.3 !important;
+            }
+
+            .cover-content {
+                position: relative;
+                z-index: 1;
+            }
+
+            .cover-logo {
+                display: block !important;
+                width: 200px !important;
+                height: auto !important;
+                position: absolute !important;
+                top: 50px !important;
+                left: 50px !important;
+                margin: 0 !important;
+                z-index: 10 !important;
+                filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15)) !important;
+            }
+
+            .cover-title {
+                font-size: 52px !important;
+                font-weight: 700 !important;
+                color: white !important;
+                margin-bottom: 30px !important;
+                letter-spacing: 4px;
+            }
+
+            .cover-version {
+                font-size: 36px !important;
+                color: rgba(255, 255, 255, 0.85) !important;
+                font-weight: 400 !important;
+                margin-top: 20px !important;
+                margin-bottom: 0 !important;
+            }
+
+            .cover-company {
+                display: none !important;
+            }
+
+            .cover-footer {
+                display: none !important;
+            }
+
+            .cover-date {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 封面页 - 仅在打印时显示 -->
+    <div class="cover-page">
+        <img src="../logo_white.png" alt="AlwaysControl Technology" class="cover-logo">
+        <div class="cover-content">
+            <h1 class="cover-title">运维数据报告</h1>
+            <p class="cover-version">基础版</p>
+            <p class="cover-company">Virtual Power Plant Operations Report</p>
+        </div>
+        <div class="cover-footer">
+            <div>专业的运维数据分析平台</div>
+            <p class="cover-date" id="cover-date">报告生成时间：2025年11月21日</p>
+        </div>
+    </div>
+    <!-- 主容器白色卡片 -->
+    <div class="main-container">
+        <!-- 卡片头部 -->
+        <div class="container-header">
+            <h1 class="report-title">运维数据报告</h1>
+            <p class="report-date" id="report-date">2025年11月19日</p>
+            <!-- 导出PDF按钮 -->
+            <button class="export-btn" onclick="exportToPDF()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                导出 PDF
+            </button>
+        </div>
+
+        <!-- 卡片主体内容 -->
+        <div class="container-body">
+            <!-- 用户 -->
+            <div class="section">
+                <h2 class="section-title">1. 用户</h2>
+
+                <h3 class="section-subtitle">1.1 用户统计</h3>
+
+                <div class="cards-grid">
+                    <div class="metric-card">
+                        <div class="card-label">总用户数</div>
+                        <div class="card-value" id="total-users">19</div>
+                        <div class="card-subtitle">较昨日 +4</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="card-label">新增用户</div>
+                        <div class="card-value value-increase" id="new-users">+4</div>
+                        <div class="card-subtitle">今日新增</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="card-label">退出用户</div>
+                        <div class="card-value value-decrease" id="exit-users">0</div>
+                        <div class="card-subtitle">今日退出</div>
+                    </div>
+                </div>
+
+                <h3 class="section-subtitle">1.2 分布</h3>
+
+                <div class="dual-cards">
+                    <!-- 地区分布 -->
+                    <div class="chart-card">
+                        <h3 class="chart-card-title">地区分布</h3>
+                        <div class="bar-chart">
+                            <div class="bar-chart-item">
+                                <div class="bar-label">
+                                    <span class="bar-label-text">新南威尔士州</span>
+                                    <span class="bar-label-value">13</span>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar-fill bar-color-1" style="width: 100%;"></div>
+                                </div>
+                            </div>
+                            <div class="bar-chart-item">
+                                <div class="bar-label">
+                                    <span class="bar-label-text">维多利亚州</span>
+                                    <span class="bar-label-value">6</span>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar-fill bar-color-1" style="width: 46%;"></div>
+                                </div>
+                            </div>
+                            <div class="bar-chart-item">
+                                <div class="bar-label">
+                                    <span class="bar-label-text">昆士兰州</span>
+                                    <span class="bar-label-value">0</span>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar-fill bar-color-1" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            <div class="bar-chart-item">
+                                <div class="bar-label">
+                                    <span class="bar-label-text">南澳大利亚州</span>
+                                    <span class="bar-label-value">0</span>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar-fill bar-color-1" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            <div class="bar-chart-item">
+                                <div class="bar-label">
+                                    <span class="bar-label-text">塔斯马尼亚州</span>
+                                    <span class="bar-label-value">0</span>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar-fill bar-color-1" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 品牌分布 -->
+                    <div class="chart-card">
+                        <h3 class="chart-card-title">品牌分布</h3>
+                        <div class="pie-chart-container">
+                            <div class="pie-chart"></div>
+                            <div class="pie-legend">
+                                <div class="pie-legend-item">
+                                    <div class="pie-legend-color color-1"></div>
+                                    <div class="pie-legend-label">
+                                        <span class="pie-legend-name">ipotisedge</span>
+                                        <span class="pie-legend-value">4 (21.1%)</span>
+                                    </div>
+                                </div>
+                                <div class="pie-legend-item">
+                                    <div class="pie-legend-color color-2"></div>
+                                    <div class="pie-legend-label">
+                                        <span class="pie-legend-name">FOX ESS</span>
+                                        <span class="pie-legend-value">6 (31.6%)</span>
+                                    </div>
+                                </div>
+                                <div class="pie-legend-item">
+                                    <div class="pie-legend-color color-3"></div>
+                                    <div class="pie-legend-label">
+                                        <span class="pie-legend-name">Alpha</span>
+                                        <span class="pie-legend-value">9 (47.4%)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 运行数据 -->
+            <div class="section">
+                <h2 class="section-title">2. 调度</h2>
+
+                <h3 class="section-subtitle">2.1 调度统计</h3>
+
+                <div class="cards-grid">
+                    <div class="metric-card">
+                        <div class="card-label">调度次数</div>
+                        <div class="card-value">3</div>
+                        <div class="card-subtitle">较昨日 +1</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="card-label">设备次数</div>
+                        <div class="card-value">32</div>
+                        <div class="card-subtitle">较昨日 +13</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="card-label">成功率</div>
+                        <div class="card-value">99.8%</div>
+                        <div class="card-subtitle">较昨日 +0.2%</div>
+                    </div>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>地区</th>
+                            <th>调度次数</th>
+                            <th>调度设备</th>
+                            <th>成功率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>新南威尔士州</td>
+                            <td>2</td>
+                            <td>26</td>
+                            <td>99.6%</td>
+                        </tr>
+                        <tr>
+                            <td>昆士兰州</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0%</td>
+                        </tr>
+                        <tr>
+                            <td>维多利亚州</td>
+                            <td>1</td>
+                            <td>6</td>
+                            <td>100%</td>
+                        </tr>
+                        <tr>
+                            <td>塔斯马尼亚州</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0%</td>
+                        </tr>
+                        <tr>
+                            <td>南澳大利亚州</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="section-subtitle page-break-before">2.2 调度记录明细</h3>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>调度时间</th>
+                            <th>地区</th>
+                            <th>指令</th>
+                            <th>设备数量</th>
+                            <th>下发设备</th>
+                            <th>停止设备</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>14:00</td>
+                            <td>新南威尔士州</td>
+                            <td>放电</td>
+                            <td>356</td>
+                            <td>341 (95.8%)</td>
+                            <td>328 (92.1%)</td>
+                        </tr>
+                        <tr>
+                            <td>18:00</td>
+                            <td>维多利亚州</td>
+                            <td>放电</td>
+                            <td>312</td>
+                            <td>299 (95.8%)</td>
+                            <td>286 (91.7%)</td>
+                        </tr>
+                        <tr>
+                            <td>18:00</td>
+                            <td>新南威尔士州</td>
+                            <td>放电</td>
+                            <td>395</td>
+                            <td>378 (95.7%)</td>
+                            <td>362 (91.6%)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="section-subtitle">2.3 异常情况记录</h3>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>异常时间</th>
+                            <th>地区</th>
+                            <th>指令</th>
+                            <th>设备序列号</th>
+                            <th>品牌</th>
+                            <th>重试次数</th>
+                            <th>异常原因</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2025-11-20 14:00</td>
+                            <td>新南威尔士州</td>
+                            <td>放电</td>
+                            <td>2448-36640026PH</td>
+                            <td>ipotisedge</td>
+                            <td>3</td>
+                            <td>等待回调通知超时</td>
+                        </tr>
+                        <tr>
+                            <td>2025-11-20 14:00</td>
+                            <td>新南威尔士州</td>
+                            <td>放电</td>
+                            <td>6305-40751037PH</td>
+                            <td>Alpha</td>
+                            <td>3</td>
+                            <td>通信连接失败</td>
+                        </tr>
+                        <tr>
+                            <td>2025-11-20 18:00</td>
+                            <td>新南威尔士州</td>
+                            <td>放电</td>
+                            <td>3782-45629018PH</td>
+                            <td>FOX ESS</td>
+                            <td>3</td>
+                            <td>设备离线</td>
+                        </tr>
+                        <tr>
+                            <td>2025-11-20 18:00</td>
+                            <td>新南威尔士州</td>
+                            <td>放电</td>
+                            <td>8217-38904562PH</td>
+                            <td>ipotisedge</td>
+                            <td>3</td>
+                            <td>逆变器故障</td>
+                        </tr>
+                        <tr>
+                            <td>2025-11-20 18:00</td>
+                            <td>新南威尔士州</td>
+                            <td>放电</td>
+                            <td>9156-39847201PH</td>
+                            <td>Alpha</td>
+                            <td>3</td>
+                            <td>电池电量不足</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 获利 -->
+            <div class="section">
+                <h2 class="section-title">3. 获利</h2>
+
+                <div class="cards-grid">
+                    <div class="metric-card">
+                        <div class="card-label">总参与率</div>
+                        <div class="card-value">98%</div>
+                        <div class="card-subtitle">较昨日 +2.1%</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="card-label">馈网量</div>
+                        <div class="card-value">318 kWh</div>
+                        <div class="card-subtitle">较昨日 +23.5 kWh</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="card-label">获利</div>
+                        <div class="card-value">$26</div>
+                        <div class="card-subtitle">较昨日 +$1.5</div>
+                    </div>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>地区</th>
+                            <th>参与率</th>
+                            <th>馈网量(kWh)</th>
+                            <th>获利(美元)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>新南威尔士州</td>
+                            <td>96%</td>
+                            <td>254</td>
+                            <td>$20</td>
+                        </tr>
+                        <tr>
+                            <td>维多利亚州</td>
+                            <td>100%</td>
+                            <td>64</td>
+                            <td>$6</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <!-- 结束 container-body -->
+    </div>
+    <!-- 结束 main-container -->
+
+    <script>
+        // 数据对象 - 将由服务器注入实际数据
+        const data = {};
+
+        // 格式化数字为千分位
+        function formatNumber(num) {
+            if (num === undefined || num === null) return '0';
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // 填充页面数据
+        function populateData() {
+            if (!data || Object.keys(data).length === 0) {
+                console.warn('数据为空,使用默认占位符');
+                return;
+            }
+
+            // 1. 用户统计数据
+            const totalUsersEl = document.getElementById('total-users');
+            if (totalUsersEl && data.total_users !== undefined) {
+                totalUsersEl.textContent = formatNumber(data.total_users);
+            }
+
+            const newUsersEl = document.getElementById('new-users');
+            if (newUsersEl && data.new_users !== undefined) {
+                newUsersEl.textContent = '+' + formatNumber(data.new_users);
+            }
+
+            const exitUsersEl = document.getElementById('exit-users');
+            if (exitUsersEl && data.exit_users !== undefined) {
+                exitUsersEl.textContent = formatNumber(data.exit_users);
+            }
+
+            // 更新总用户变化趋势
+            const totalChangeEl = totalUsersEl?.nextElementSibling;
+            if (totalChangeEl && data.total_change !== undefined) {
+                const change = data.total_change;
+                const sign = change >= 0 ? '+' : '';
+                totalChangeEl.textContent = `较昨日 ${sign}${change}`;
+            }
+
+            // 2. 地区分布数据(如果有)
+            if (data.device_by_region) {
+                const regions = Object.entries(data.device_by_region)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5);
+
+                const maxValue = regions[0]?.[1] || 1;
+
+                // 这里可以动态更新条形图,但由于HTML是静态的,暂时保持不变
+                console.log('地区分布数据:', regions);
+            }
+
+            // 3. 品牌分布数据(如果有)
+            if (data.device_by_brand) {
+                const brands = Object.entries(data.device_by_brand);
+                const total = brands.reduce((sum, [_, count]) => sum + count, 0);
+                console.log('品牌分布数据:', brands, '总计:', total);
+            }
+
+            // 4. 调度统计(如果有operation数据)
+            if (data.operation) {
+                const dispatchCountEls = document.querySelectorAll('.metric-card .card-value');
+                // 这里需要根据实际的HTML结构来更新
+                console.log('调度数据:', data.operation);
+            }
+
+            console.log('✓ 数据填充完成', data);
+        }
+
+        // 生成报告编号和时间
+        function generateReportInfo() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hour = String(now.getHours()).padStart(2, '0');
+            const minute = String(now.getMinutes()).padStart(2, '0');
+            const second = String(now.getSeconds()).padStart(2, '0');
+
+            const dateText = data.date || `${year}年${month}月${day}日`;
+
+            // 更新页面日期
+            const reportDateEl = document.getElementById('report-date');
+            if (reportDateEl) {
+                reportDateEl.textContent = dateText;
+            }
+
+            // 更新封面日期
+            const coverDateEl = document.getElementById('cover-date');
+            if (coverDateEl) {
+                coverDateEl.textContent = `报告生成时间：${dateText}`;
+            }
+
+            // 更新封面版本元素显示日期（使用-连接）
+            const coverVersionEl = document.querySelector('.cover-version');
+            if (coverVersionEl) {
+                coverVersionEl.textContent = `${year}-${month}-${day}`;
+            }
+        }
+
+        // 导出PDF功能
+        function exportToPDF() {
+            // 调用浏览器打印功能
+            // 用户可以选择"另存为PDF"来保存
+            window.print();
+        }
+
+        // 页面加载完成后执行
+        window.addEventListener('DOMContentLoaded', function() {
+            populateData();  // 先填充数据
+            generateReportInfo();  // 再更新时间
+        });
+    </script>
+</body>
+</html>

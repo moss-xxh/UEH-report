@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPP Operations Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #f5f5f7;
+            color: #000000;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        /* 主容器白色卡片 */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        /* 卡片头部 */
+        .container-header {
+            padding: 40px 60px 30px 60px;
+            border-bottom: 1px solid #e8e9ed;
+            position: relative;
+        }
+
+        .report-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+        }
+
+        .report-date {
+            font-size: 16px;
+            color: #86868b;
+            font-weight: 400;
+        }
+
+        /* 卡片主体内容区域 */
+        .container-body {
+            padding: 40px 60px 60px 60px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ==================== 封面页(现代风格) ==================== */
+        .cover-page {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 60px 80px;
+            page-break-after: always;
+            background-image: url('cover.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        .cover-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(65, 105, 225, 0.82) 0%, rgba(41, 128, 185, 0.78) 100%);
+            z-index: 0;
+        }
+
+        .cover-page > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .cover-logo {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -1px;
+            backdrop-filter: blur(10px);
+        }
+
+        .cover-company {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 400;
+            text-align: right;
+        }
+
+        .cover-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px 0;
+        }
+
+        .cover-title {
+            font-size: 72px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 32px;
+            letter-spacing: 8px;
+            line-height: 1.3;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .cover-subtitle {
+            font-size: 28px;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 40px;
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+
+        .cover-company-name {
+            font-size: 32px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .cover-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .cover-slogan {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+
+        .cover-meta {
+            text-align: right;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+        }
+
+        .cover-meta-item {
+            margin-bottom: 4px;
+        }
+
+        /* ==================== 内页专业结构 ==================== */
+        .content-page {
+            width: 100%;
+            min-height: 100vh;
+            padding: 0;
+            page-break-after: always;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-header {
+            padding: 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .page-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #5B7FE8;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .logo-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: #000000;
+        }
+
+        .page-company {
+            font-size: 14px;
+            color: #333333;
+        }
+
+        .page-body {
+            flex: 1;
+            padding: 40px 80px 60px 80px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 24px;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin: 32px 0 16px 0;
+        }
+
+        /* 卡片网格 */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 0;
+        }
+
+        .metric-card {
+            background: #f5f5f7;
+            padding: 28px 24px;
+            border-radius: 12px;
+            border: none;
+        }
+
+        .card-label {
+            font-size: 14px;
+            color: #86868b;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .card-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        /* 新增用户 - 蓝色 */
+        .card-value.value-increase {
+            color: #007aff;
+        }
+
+        /* 退出用户 - 红色 */
+        .card-value.value-decrease {
+            color: #ff3b30;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: #86868b;
+        }
+
+        /* 双栏卡片布局 */
+        .dual-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .chart-card {
+            background: #ffffff;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .chart-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 28px;
+        }
+
+        /* 条形图样式 */
+        .bar-chart-item {
+            margin-bottom: 24px;
+        }
+
+        .bar-chart-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .bar-label-text {
+            font-size: 15px;
+            font-weight: 500;
+            color: #1d1d1f;
+        }
+
+        .bar-label-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+
+        .bar-container {
+            width: 100%;
+            height: 8px;
+            background: #f5f5f7;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: #1d1d1f;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+
+        /* 条形图颜色 */
+        .bar-fill.bar-color-1 {
+            background: #007aff;
+        }
+
+        .bar-fill.bar-color-2 {
+            background: #34c759;
+        }
+
+        .bar-fill.bar-color-3 {
+            background: #ff9500;
+        }
+
+        .bar-fill.bar-color-4 {
+            background: #ff3b30;
+        }
+
+        .bar-fill.bar-color-5 {
+            background: #af52de;
+        }
+
+        /* 饼图样式 */
+        .pie-chart-container {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .pie-chart {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #007aff 0% 21.1%,
+                #34c759 21.1% 52.7%,
+                #ff9500 52.7% 100%
+            );
+        }
+
+        .pie-legend {
+            flex: 1;
+        }
+
+        .pie-legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .pie-legend-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .pie-legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .pie-legend-color.color-1 {
+            background: #007aff;
+        }
+
+        .pie-legend-color.color-2 {
+            background: #34c759;
+        }
+
+        .pie-legend-color.color-3 {
+            background: #ff9500;
+        }
+
+        .pie-legend-label {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pie-legend-name {
+            font-size: 14px;
+            color: #1d1d1f;
+            font-weight: 500;
+        }
+
+        .pie-legend-value {
+            font-size: 14px;
+            color: #1d1d1f;
+            font-weight: 600;
+        }
+
+        /* 表格样式 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0 0 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .data-table th {
+            background: #5B7FE8;
+            color: #ffffff;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 1px solid #e8e9ed;
+        }
+
+        .data-table td {
+            padding: 14px 16px;
+            font-size: 13px;
+            color: #1d1d1f;
+            border-bottom: 1px solid #e8e9ed;
+            background: #ffffff;
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tbody tr:hover {
+            background: #fafafa;
+        }
+
+        /* 页脚 */
+        .page-footer {
+            padding: 20px 80px;
+            text-align: right;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .page-number {
+            font-size: 12px;
+            color: #666666;
+        }
+
+        /* 导出按钮 */
+        .export-btn {
+            position: absolute;
+            top: 40px;
+            right: 60px;
+            padding: 10px 20px;
+            background: #1d1d1f;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .export-btn:hover {
+            background: #000000;
+            transform: translateY(-1px);
+        }
+
+        .export-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 移动端响应式适配 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px 0;
+            }
+
+            .main-container {
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .container-header {
+                padding: 20px 16px;
+            }
+
+            .report-title {
+                font-size: 24px;
+            }
+
+            .report-date {
+                font-size: 14px;
+            }
+
+            .export-btn {
+                top: 20px;
+                right: 16px;
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+
+            .container-body {
+                padding: 20px 16px;
+            }
+
+            .section {
+                margin-bottom: 30px;
+            }
+
+            .section-title {
+                font-size: 18px;
+                margin-bottom: 16px;
+            }
+
+            .section-subtitle {
+                font-size: 15px;
+                margin: 20px 0 12px 0;
+            }
+
+            /* 卡片改为单列布局 */
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .metric-card {
+                padding: 20px 16px;
+            }
+
+            .card-label {
+                font-size: 13px;
+                margin-bottom: 10px;
+            }
+
+            .card-value {
+                font-size: 28px;
+                margin-bottom: 6px;
+            }
+
+            .card-subtitle {
+                font-size: 13px;
+            }
+
+            /* 双栏改为单列 */
+            .dual-cards {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                margin: 16px 0;
+            }
+
+            .chart-card {
+                padding: 20px 16px;
+            }
+
+            .chart-card-title {
+                font-size: 15px;
+                margin-bottom: 20px;
+            }
+
+            /* 饼图容器改为竖向布局 */
+            .pie-chart-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .pie-chart {
+                width: 160px;
+                height: 160px;
+                margin: 0 auto;
+            }
+
+            .pie-legend {
+                width: 100%;
+            }
+
+            .pie-legend-item {
+                margin-bottom: 12px;
+            }
+
+            .pie-legend-name,
+            .pie-legend-value {
+                font-size: 13px;
+            }
+
+            /* 条形图优化 */
+            .bar-chart-item {
+                margin-bottom: 16px;
+            }
+
+            .bar-label-text,
+            .bar-label-value {
+                font-size: 14px;
+            }
+
+            /* 移动端表格滚动优化 */
+            .data-table {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 8px;
+                font-size: 10px;
+            }
+
+            .data-table thead,
+            .data-table tbody {
+                display: table;
+                width: max-content;
+                min-width: 100%;
+                table-layout: auto;
+            }
+
+            .data-table tr {
+                display: table-row;
+            }
+
+            .data-table th,
+            .data-table td {
+                display: table-cell;
+                padding: 8px 6px;
+                font-size: 10px;
+                white-space: nowrap;
+                vertical-align: middle;
+            }
+
+            .data-table th {
+                background: #5B7FE8 !important;
+                color: #ffffff !important;
+                font-weight: 600;
+                border-right: 1px solid rgba(255, 255, 255, 0.2);
+                text-align: left;
+            }
+
+            .data-table th:last-child {
+                border-right: none;
+            }
+
+            .data-table td {
+                background: #ffffff !important;
+                color: #1d1d1f !important;
+                border-bottom: 1px solid #e8e9ed;
+                text-align: left;
+            }
+
+            .data-table tbody tr:last-child td {
+                border-bottom: none;
+            }
+        }
+
+        /* 网页浏览时隐藏多余元素 */
+        @media screen {
+            .cover-page,
+            .page-header,
+            .page-footer,
+            .page-logo,
+            .page-company,
+            .page-title {
+                display: none !important;
+            }
+
+            .content-page {
+                min-height: auto !important;
+                page-break-after: auto !important;
+                padding: 0 !important;
+                background: transparent !important;
+            }
+
+            .page-body {
+                padding: 0 !important;
+            }
+        }
+
+        /* 打印样式 */
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                background: #ffffff !important;
+            }
+
+            @page {
+                margin: 15mm;
+                size: A4 portrait;
+            }
+
+            /* 隐藏导出按钮 */
+            .export-btn {
+                display: none !important;
+            }
+
+            /* 打印时隐藏网页版,显示打印版 */
+            .main-container {
+                display: none !important;
+            }
+
+            .cover-page {
+                display: none !important;
+            }
+
+            /* 显示content-page内容 */
+            .content-page {
+                display: block !important;
+                min-height: auto !important;
+                page-break-after: auto !important;
+                padding: 0 !important;
+                background: white !important;
+            }
+
+            .page-header,
+            .page-footer {
+                display: none !important;
+            }
+
+            .page-body {
+                padding: 20px !important;
+            }
+
+            .container-header {
+                background: white !important;
+                border-bottom: 2px solid #000 !important;
+                padding: 20px !important;
+            }
+
+            .report-title {
+                color: #000 !important;
+            }
+
+            .report-date {
+                color: #333 !important;
+            }
+
+            .container-body {
+                padding: 20px !important;
+            }
+
+            .section {
+                page-break-inside: avoid;
+                margin-bottom: 30px !important;
+            }
+
+            .section-title {
+                color: #000 !important;
+                page-break-after: avoid;
+            }
+
+            .section-subtitle {
+                color: #000 !important;
+                page-break-after: avoid;
+            }
+
+            /* 卡片网格打印优化 */
+            .cards-grid {
+                page-break-inside: avoid;
+            }
+
+            .metric-card {
+                page-break-inside: avoid;
+                background: #f5f5f5 !important;
+                border: 1px solid #ddd !important;
+            }
+
+            .card-label {
+                color: #666 !important;
+            }
+
+            .card-value {
+                color: #000 !important;
+            }
+
+            .card-value.value-increase {
+                color: #000 !important;
+            }
+
+            .card-value.value-decrease {
+                color: #000 !important;
+            }
+
+            .card-subtitle {
+                color: #666 !important;
+            }
+
+            /* 双栏卡片优化 */
+            .dual-cards {
+                page-break-inside: avoid;
+            }
+
+            .chart-card {
+                background: white !important;
+                border: 1px solid #ddd !important;
+                page-break-inside: avoid;
+            }
+
+            .chart-card-title {
+                color: #000 !important;
+            }
+
+            /* 条形图 */
+            .bar-label-text,
+            .bar-label-value {
+                color: #000 !important;
+            }
+
+            .bar-container {
+                background: #e5e5e5 !important;
+            }
+
+            .bar-fill {
+                background: #333 !important;
+            }
+
+            .bar-fill.bar-color-1,
+            .bar-fill.bar-color-2,
+            .bar-fill.bar-color-3,
+            .bar-fill.bar-color-4,
+            .bar-fill.bar-color-5 {
+                background: #333 !important;
+            }
+
+            /* 饼图图例 */
+            .pie-legend-color {
+                border: 1px solid #000 !important;
+            }
+
+            .pie-legend-color.color-1,
+            .pie-legend-color.color-2,
+            .pie-legend-color.color-3 {
+                background: #333 !important;
+            }
+
+            .pie-legend-name,
+            .pie-legend-value {
+                color: #000 !important;
+            }
+
+            /* 表格打印优化 */
+            .data-table {
+                page-break-inside: avoid;
+                border: 1px solid #000 !important;
+            }
+
+            .data-table th {
+                background: #333 !important;
+                color: #fff !important;
+                border: 1px solid #000 !important;
+            }
+
+            .data-table td {
+                background: #fff !important;
+                color: #000 !important;
+                border: 1px solid #ddd !important;
+            }
+
+            .data-table tbody tr:hover {
+                background: #fff !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 主容器白色卡片 -->
+    <div class="main-container">
+        <!-- 卡片头部 -->
+        <div class="container-header">
+            <h1 class="report-title">Operations Data Report</h1>
+            <p class="report-date" id="report-date">November 19, 2025</p>
+            <!-- Export PDF Button -->
+            <button class="export-btn" onclick="exportToPDF()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Export PDF
+            </button>
+        </div>
+
+        <!-- 卡片主体内容 -->
+        <div class="container-body">
+
+    <!-- Cover Page (for printing) -->
+    <div class="cover-page">
+        <div class="cover-header">
+            <div class="cover-logo">VPP</div>
+            <div class="cover-company">XuHeng Electronics (Shenzhen) Co., Ltd.</div>
+        </div>
+
+        <div class="cover-main">
+            <h1 class="cover-title">Operations Data Report</h1>
+            <p class="cover-subtitle">Standard Edition</p>
+            <p class="cover-company-name">XuHeng VPP Virtual Power Plant Monitoring Platform</p>
+        </div>
+
+        <div class="cover-footer">
+            <div class="cover-slogan">Professional Energy Management Service Platform</div>
+            <div class="cover-meta">
+                <div class="cover-meta-item">Report Generated: <span id="cover-generated-time">November 19, 2025</span></div>
+                <div class="cover-meta-item">Report No.: <span id="report-number">202511191600001</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 1: User Statistics -->
+    <div class="content-page">
+        <div class="page-header">
+            <div class="page-logo">
+                <div class="logo-icon">V</div>
+                <div class="logo-text">VPP Operations</div>
+            </div>
+            <div class="page-company">XuHeng Electronics (Shenzhen) Co., Ltd.</div>
+        </div>
+
+        <div class="page-body">
+            <!-- Users -->
+            <div class="section">
+                <h2 class="section-title">1. Users</h2>
+
+                <h3 class="section-subtitle">1.1 User Statistics</h3>
+
+                <div class="cards-grid">
+                <div class="metric-card">
+                    <div class="card-label">Total Users</div>
+                    <div class="card-value" id="total-users">19</div>
+                    <div class="card-subtitle">vs. Yesterday +4</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="card-label">New Users</div>
+                    <div class="card-value value-increase" id="new-users">+4</div>
+                    <div class="card-subtitle">Today</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="card-label">Exited Users</div>
+                    <div class="card-value value-decrease" id="exit-users">0</div>
+                    <div class="card-subtitle">Today</div>
+                </div>
+                </div>
+
+                <h3 class="section-subtitle">1.2 Distribution</h3>
+
+                <div class="dual-cards">
+                    <!-- Regional Distribution -->
+                    <div class="chart-card">
+                        <h3 class="chart-card-title">Regional Distribution</h3>
+                        <div class="bar-chart">
+                            <div class="bar-chart-item">
+                                <div class="bar-label">
+                                    <span class="bar-label-text">NSW</span>
+                                    <span class="bar-label-value">13</span>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar-fill bar-color-1" style="width: 100%;"></div>
+                                </div>
+                            </div>
+                            <div class="bar-chart-item">
+                                <div class="bar-label">
+                                    <span class="bar-label-text">VIC</span>
+                                    <span class="bar-label-value">6</span>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar-fill bar-color-1" style="width: 46%;"></div>
+                                </div>
+                            </div>
+                            <div class="bar-chart-item">
+                                <div class="bar-label">
+                                    <span class="bar-label-text">QLD</span>
+                                    <span class="bar-label-value">0</span>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar-fill bar-color-1" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            <div class="bar-chart-item">
+                                <div class="bar-label">
+                                    <span class="bar-label-text">SA</span>
+                                    <span class="bar-label-value">0</span>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar-fill bar-color-1" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            <div class="bar-chart-item">
+                                <div class="bar-label">
+                                    <span class="bar-label-text">TAS</span>
+                                    <span class="bar-label-value">0</span>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar-fill bar-color-1" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Brand Distribution -->
+                    <div class="chart-card">
+                        <h3 class="chart-card-title">Brand Distribution</h3>
+                        <div class="pie-chart-container">
+                            <div class="pie-chart"></div>
+                            <div class="pie-legend">
+                                <div class="pie-legend-item">
+                                    <div class="pie-legend-color color-1"></div>
+                                    <div class="pie-legend-label">
+                                        <span class="pie-legend-name">ipotisedge</span>
+                                        <span class="pie-legend-value">4 (21.1%)</span>
+                                    </div>
+                                </div>
+                                <div class="pie-legend-item">
+                                    <div class="pie-legend-color color-2"></div>
+                                    <div class="pie-legend-label">
+                                        <span class="pie-legend-name">FOX ESS</span>
+                                        <span class="pie-legend-value">6 (31.6%)</span>
+                                    </div>
+                                </div>
+                                <div class="pie-legend-item">
+                                    <div class="pie-legend-color color-3"></div>
+                                    <div class="pie-legend-label">
+                                        <span class="pie-legend-name">Alpha</span>
+                                        <span class="pie-legend-value">9 (47.4%)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operations Data -->
+            <div class="section">
+                <h2 class="section-title">2. Dispatch</h2>
+
+                <h3 class="section-subtitle">2.1 Dispatch Statistics</h3>
+
+                <div class="cards-grid">
+                <div class="metric-card">
+                    <div class="card-label">Dispatches</div>
+                    <div class="card-value">3</div>
+                    <div class="card-subtitle">vs. Yesterday +1</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="card-label">Device Count</div>
+                    <div class="card-value">32</div>
+                    <div class="card-subtitle">vs. Yesterday +13</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="card-label">Success Rate</div>
+                    <div class="card-value">99.8%</div>
+                    <div class="card-subtitle">vs. Yesterday +0.2%</div>
+                </div>
+                </div>
+
+                <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Region</th>
+                        <th>Dispatches</th>
+                        <th>Devices</th>
+                        <th>Success Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NSW</td>
+                        <td>2</td>
+                        <td>26</td>
+                        <td>99.6%</td>
+                    </tr>
+                    <tr>
+                        <td>QLD</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0%</td>
+                    </tr>
+                    <tr>
+                        <td>VIC</td>
+                        <td>1</td>
+                        <td>6</td>
+                        <td>100%</td>
+                    </tr>
+                    <tr>
+                        <td>TAS</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0%</td>
+                    </tr>
+                    <tr>
+                        <td>SA</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+                <h3 class="section-subtitle">2.2 Dispatch Records</h3>
+
+                <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Region</th>
+                        <th>Command</th>
+                        <th>Total Devices</th>
+                        <th>Dispatched</th>
+                        <th>Stopped</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>14:00</td>
+                        <td>NSW</td>
+                        <td>Discharge</td>
+                        <td>356</td>
+                        <td>341 (95.8%)</td>
+                        <td>328 (92.1%)</td>
+                    </tr>
+                    <tr>
+                        <td>18:00</td>
+                        <td>VIC</td>
+                        <td>Discharge</td>
+                        <td>312</td>
+                        <td>299 (95.8%)</td>
+                        <td>286 (91.7%)</td>
+                    </tr>
+                    <tr>
+                        <td>18:00</td>
+                        <td>NSW</td>
+                        <td>Discharge</td>
+                        <td>395</td>
+                        <td>378 (95.7%)</td>
+                        <td>362 (91.6%)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+                <h3 class="section-subtitle">2.3 Exception Records</h3>
+
+                <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Region</th>
+                        <th>Command</th>
+                        <th>Device SN</th>
+                        <th>Brand</th>
+                        <th>Retries</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2025-11-20 14:00</td>
+                        <td>NSW</td>
+                        <td>Discharge</td>
+                        <td>2448-36640026PH</td>
+                        <td>ipotisedge</td>
+                        <td>3</td>
+                        <td>Callback timeout</td>
+                    </tr>
+                    <tr>
+                        <td>2025-11-20 14:00</td>
+                        <td>NSW</td>
+                        <td>Discharge</td>
+                        <td>6305-40751037PH</td>
+                        <td>Alpha</td>
+                        <td>3</td>
+                        <td>Connection failed</td>
+                    </tr>
+                    <tr>
+                        <td>2025-11-20 18:00</td>
+                        <td>NSW</td>
+                        <td>Discharge</td>
+                        <td>3782-45629018PH</td>
+                        <td>FOX ESS</td>
+                        <td>3</td>
+                        <td>Device offline</td>
+                    </tr>
+                    <tr>
+                        <td>2025-11-20 18:00</td>
+                        <td>NSW</td>
+                        <td>Discharge</td>
+                        <td>8217-38904562PH</td>
+                        <td>ipotisedge</td>
+                        <td>3</td>
+                        <td>Inverter fault</td>
+                    </tr>
+                    <tr>
+                        <td>2025-11-20 18:00</td>
+                        <td>NSW</td>
+                        <td>Discharge</td>
+                        <td>9156-39847201PH</td>
+                        <td>Alpha</td>
+                        <td>3</td>
+                        <td>Low battery</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+
+            <!-- Profit -->
+            <div class="section">
+                <h2 class="section-title">3. Profit</h2>
+
+                <div class="cards-grid">
+                <div class="metric-card">
+                    <div class="card-label">Participation Rate</div>
+                    <div class="card-value">98%</div>
+                    <div class="card-subtitle">vs. Yesterday +2.1%</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="card-label">Grid Power</div>
+                    <div class="card-value">318 kWh</div>
+                    <div class="card-subtitle">vs. Yesterday +23.5 kWh</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="card-label">Profit</div>
+                    <div class="card-value">$26</div>
+                    <div class="card-subtitle">vs. Yesterday +$1.5</div>
+                </div>
+                </div>
+
+                <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Region</th>
+                        <th>Participation</th>
+                        <th>Grid Power (kWh)</th>
+                        <th>Profit (USD)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NSW</td>
+                        <td>96%</td>
+                        <td>254</td>
+                        <td>$20</td>
+                    </tr>
+                    <tr>
+                        <td>VIC</td>
+                        <td>100%</td>
+                        <td>64</td>
+                        <td>$6</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+
+        </div>
+        <!-- 结束 container-body -->
+    </div>
+    <!-- 结束 main-container -->
+
+    <script>
+        // 数据对象 - 将由服务器注入实际数据
+        const data = {};
+
+        // 格式化数字为千分位
+        function formatNumber(num) {
+            if (num === undefined || num === null) return '0';
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // 填充页面数据
+        function populateData() {
+            if (!data || Object.keys(data).length === 0) {
+                console.warn('数据为空,使用默认占位符');
+                return;
+            }
+
+            // 1. 用户统计数据
+            const totalUsersEl = document.getElementById('total-users');
+            if (totalUsersEl && data.total_users !== undefined) {
+                totalUsersEl.textContent = formatNumber(data.total_users);
+            }
+
+            const newUsersEl = document.getElementById('new-users');
+            if (newUsersEl && data.new_users !== undefined) {
+                newUsersEl.textContent = '+' + formatNumber(data.new_users);
+            }
+
+            const exitUsersEl = document.getElementById('exit-users');
+            if (exitUsersEl && data.exit_users !== undefined) {
+                exitUsersEl.textContent = formatNumber(data.exit_users);
+            }
+
+            // 更新总用户变化趋势
+            const totalChangeEl = totalUsersEl?.nextElementSibling;
+            if (totalChangeEl && data.total_change !== undefined) {
+                const change = data.total_change;
+                const sign = change >= 0 ? '+' : '';
+                totalChangeEl.textContent = `较昨日 ${sign}${change}`;
+            }
+
+            // 2. 地区分布数据(如果有)
+            if (data.device_by_region) {
+                const regions = Object.entries(data.device_by_region)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5);
+
+                const maxValue = regions[0]?.[1] || 1;
+
+                // 这里可以动态更新条形图,但由于HTML是静态的,暂时保持不变
+                console.log('地区分布数据:', regions);
+            }
+
+            // 3. 品牌分布数据(如果有)
+            if (data.device_by_brand) {
+                const brands = Object.entries(data.device_by_brand);
+                const total = brands.reduce((sum, [_, count]) => sum + count, 0);
+                console.log('品牌分布数据:', brands, '总计:', total);
+            }
+
+            // 4. 调度统计(如果有operation数据)
+            if (data.operation) {
+                const dispatchCountEls = document.querySelectorAll('.metric-card .card-value');
+                // 这里需要根据实际的HTML结构来更新
+                console.log('调度数据:', data.operation);
+            }
+
+            console.log('✓ 数据填充完成', data);
+        }
+
+        // 生成报告编号和时间
+        function generateReportInfo() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hour = String(now.getHours()).padStart(2, '0');
+            const minute = String(now.getMinutes()).padStart(2, '0');
+            const second = String(now.getSeconds()).padStart(2, '0');
+
+            const dateText = data.date || `${year}年${month}月${day}日`;
+            const timeText = data.generated_at || `${year}年${month}月${day}日 ${hour}:${minute}:${second}`;
+            const reportNo = `${year}${month}${day}${hour}${minute}${second}`;
+
+            // 更新页面日期
+            const reportDateEl = document.getElementById('report-date');
+            if (reportDateEl) {
+                reportDateEl.textContent = dateText;
+            }
+
+            // 更新封面(用于打印)
+            const coverTimeEl = document.getElementById('cover-generated-time');
+            if (coverTimeEl) {
+                coverTimeEl.textContent = timeText;
+            }
+
+            const reportNoEl = document.getElementById('report-number');
+            if (reportNoEl) {
+                reportNoEl.textContent = reportNo;
+            }
+        }
+
+        // 导出PDF功能
+        function exportToPDF() {
+            // 调用浏览器打印功能
+            // 用户可以选择"另存为PDF"来保存
+            window.print();
+        }
+
+        // 页面加载完成后执行
+        window.addEventListener('DOMContentLoaded', function() {
+            populateData();  // 先填充数据
+            generateReportInfo();  // 再更新时间
+        });
+    </script>
+</body>
+</html>

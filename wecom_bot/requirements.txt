@@ -1,0 +1,20 @@
+# 企业微信机器人依赖包
+
+# HTTP请求
+requests>=2.31.0
+
+# 定时任务
+schedule>=1.2.0
+
+# 系统监控
+psutil>=5.9.0
+
+# 数据库连接（根据需要选择）
+# pymysql>=1.1.0          # MySQL
+# psycopg2-binary>=2.9.0  # PostgreSQL
+# pymongo>=4.6.0          # MongoDB
+# redis>=5.0.0            # Redis
+
+# 数据处理
+# pandas>=2.0.0           # 数据分析（可选）
+# numpy>=1.24.0           # 数值计算（可选）
